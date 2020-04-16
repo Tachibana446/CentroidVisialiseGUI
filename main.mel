@@ -16,84 +16,90 @@ global proc createWindow() {
     button -l "SET" -c "setCurrentObject(\"rootJointTextField\")";
     setParent ..;
 
-    rowLayout -nc 4;
+    button -l "Do it" -c "SearchBones_ButtonClick()";
+    
+    separator -st "doubleDash" -hr true -w 150;
+    
+
+
+    rowColumnLayout -nc 3;
+
     text -l "ì∑";
+    rowLayout -nc 2;
     textField chestJointTextField;
     button -l "SET" -c "setCurrentObject(\"chestJointTextField\")";
     setParent ..;
+    text -l "";
 
-    rowLayout -nc 4;
-    text -l "ç∂è„òr";
+    text -l "" -h 15;
+    text -l "ç∂";
+    text -l "âE";
+
+
+    text -l "è„òr";
+    rowLayout -nc 2;
     textField upperArmL_Textfield;
     button -l "SET" -c "setCurrentObject(\"upperArmL_Textfield\")";
     setParent ..;
 
-    rowLayout -nc 4;
-    text -l "âEè„òr";
+    rowLayout -nc 2;
     textField upperArmR_Textfield;
     button -l "SET" -c "setCurrentObject(\"upperArmR_Textfield\")";
     setParent ..;
 
-    rowLayout -nc 3 _threeColumnsRows;
-    columnLayout _headerColumn;
-    text -l "" -h 15;
     text -l "ëOòr";
-    text -l "éË";
-    text -l "è„éà";
-    text -l "â∫éàÅiïGÅj";
-    text -l "ë´";
-    setParent ..;
     
-    columnLayout _leftColumn;
-    text -l "ç∂";
     rowLayout -nc 2;
     textField foreArmL_textField;
     button -l "SET" -c "setCurrentObject(\"foreArmL_textField\")";
     setParent ..;
     rowLayout -nc 2;
+    textField foreArmR_textField;
+    button -l "SET" -c "setCurrentObject(\"foreArmR_textField\")";
+    setParent ..;
+    
+    text -l "éË";
+    rowLayout -nc 2;
     textField handL_textField;
     button -l "SET" -c "setCurrentObject(\"handL_textField\")";
+    setParent ..; 
+    rowLayout -nc 2;
+    textField handR_textField;
+    button -l "SET" -c "setCurrentObject(\"handR_textField\")";
     setParent ..;
+
+    text -l "è„éà";
     rowLayout -nc 2;
     textField upperLegL_textField;
     button -l "SET" -c "setCurrentObject(\"upperLegL_textField\")";
     setParent ..;
     rowLayout -nc 2;
-    textField underLegL_textField;
-    button -l "SET" -c "setCurrentObject(\"underLegL_textField\")";
-    setParent ..;
-    rowLayout -nc 2;
-    textField legL_textField;
-    button -l "SET" -c "setCurrentObject(\"legL_textField\")";
-    setParent ..;
-    setParent ..;
-
-    columnLayout _rightColumn; 
-    text -l "âE";
-    rowLayout -nc 2;
-    textField foreArmR_textField;
-    button -l "SET" -c "setCurrentObject(\"foreArmR_textField\")";
-    setParent ..;
-    rowLayout -nc 2;
-    textField handR_textField;
-    button -l "SET" -c "setCurrentObject(\"handR_textField\")";
-    setParent ..;
-    rowLayout -nc 2;
     textField upperLegR_textField;
     button -l "SET" -c "setCurrentObject(\"upperLegR_textField\")";
+    setParent ..;
+
+    text -l "â∫éàÅiïGÅj";
+    rowLayout -nc 2;
+    textField underLegL_textField;
+    button -l "SET" -c "setCurrentObject(\"underLegL_textField\")";
     setParent ..;
     rowLayout -nc 2;
     textField underLegR_textField;
     button -l "SET" -c "setCurrentObject(\"underLegR_textField\")";
     setParent ..;
+    
+    text -l "ë´";
+    rowLayout -nc 2;
+    textField legL_textField;
+    button -l "SET" -c "setCurrentObject(\"legL_textField\")";
+    setParent ..;
     rowLayout -nc 2;
     textField legR_textField;
     button -l "SET" -c "setCurrentObject(\"legR_textField\")";
     setParent ..;
-    setParent ..;
 
     setParent ..;
-    button -l "Do it" -c "SearchBones_ButtonClick()";
+    
 
     showWindow $win;
 }
