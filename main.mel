@@ -66,7 +66,45 @@ proc SearchBones(string $root){
     {
         textField -e -tx $chest chestJointTextField;
         // 上腕の取得
-
+        SearchUpperArms($chest);
+    }
+}
+        
+// 上腕の取得
+proc SearchUpperArms(string $chest){
+    $upperChildren = `listRelatives -path -type "joint" $chest`;
+    int $lengthList[];
+    $i = 0;
+    for ($uc in $upperChildren)
+    {
+        $lengthList[$i] = GetDecendantsCount($uc, 0);
+        $i += 1;
+    }
+    $sorted = sort($lengthList);
+    string $upperArm1 = "";
+    string $upperArm2;
+    $i = 0;
+    // 最も子孫が長い2つを腕と認定
+    for ($uc in $upperChildren)
+    {   
+        if($upperArm1 == "" && $lengthList[$i] == $sorted[size($sorted) - 1])
+            $upperArm1 = $uc;
+        else if($upperArm1 != "" && $lengthList[$i] == $sorted[size($sorted) - 2])
+        {
+            $upperArm2 = $uc;
+            break;
+        }
+        $i += 1;
+    }
+    $pos1 = `xform -q -ws -t $upperArm1`;
+    $pos2 = `xform -q -ws -t $upperArm2`;
+    // （前から見て）左にある方が右腕
+    if($pos1[0] < $pos2[0]){
+        textField -e -tx $upperArm1 upperArmR_Textfield;
+        textField -e -tx $upperArm2 upperArmL_Textfield;
+    }else{
+        textField -e -tx $upperArm2 upperArmR_Textfield;
+        textField -e -tx $upperArm1 upperArmL_Textfield;
     }
 }
 
@@ -85,8 +123,21 @@ proc string GetChestRecursive(string $joint){
 }
 
 // 再帰して子孫の長さ(何代まで続いたか)を取得
-proc int GetDecendantsCount(string $joint){
-    
+proc int GetDecendantsCount(string $joint, int $count){
+    $children = `listRelatives -path -type "joint" $joint`;
+    $count = `size $children`;
+    if($count == 0)
+        return $count;
+    // 各兄弟の中で最も子孫が長いもののカウントを返す
+    $max = $count;
+    for ($c in $children)
+    {
+        $num = GetDecendantsCount($c, $count + 1);
+        if($num > $max)
+            $max = $num;  
+    }
+    return $max;
 }
+
 
 createWindow();
