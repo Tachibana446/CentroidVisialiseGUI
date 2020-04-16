@@ -1,4 +1,7 @@
 // Shift JIS
+/*************************************************
+人間のジョイントの各パーツ・構造を推定するスクリプト
+**************************************************/
 
 global proc createWindow() {
     if((`window -ex centroidGuiWindow`) == true) deleteUI centroidGuiWindow;
@@ -36,6 +39,7 @@ global proc createWindow() {
     text -l "";
     text -l "前腕";
     text -l "手";
+    text -l "上肢";
     setParent ..;
     
     columnLayout _leftColumn;
@@ -48,6 +52,10 @@ global proc createWindow() {
     textField handL_textField;
     button -l "SET" -c "setCurrentObject(\"handL_textField\")";
     setParent ..;
+    rowLayout -nc 2;
+    textField upperLegL_textField;
+    button -l "SET" -c "setCurrentObject(\"upperLegL_textField\")";
+    setParent ..;
     setParent ..;
 
     columnLayout _rightColumn; 
@@ -59,6 +67,10 @@ global proc createWindow() {
     rowLayout -nc 2;
     textField handR_textField;
     button -l "SET" -c "setCurrentObject(\"handR_textField\")";
+    setParent ..;
+    rowLayout -nc 2;
+    textField upperLegR_textField;
+    button -l "SET" -c "setCurrentObject(\"upperLegR_textField\")";
     setParent ..;
     setParent ..;
 
@@ -99,6 +111,8 @@ proc SearchBones(string $root){
         textField -e -tx $chest chestJointTextField;
         // 上腕の取得
         SearchUpperArms($chest);
+        $waist = GetWaistRecursive($chest, $root);
+        SearchUpperLegJoint($root, $waist);
     }
 }
         
@@ -145,6 +159,7 @@ proc SearchUpperArms(string $chest){
     SearchHandJoint($upperArmL, $upperArmR);
 }
 
+// 前腕と手を取得
 proc SearchHandJoint(string $upperArmL, string $upperArmR){
     $handL = GetChestRecursive($upperArmL);
     if($handL != ""){
@@ -158,6 +173,61 @@ proc SearchHandJoint(string $upperArmL, string $upperArmR){
         textField -e -tx $foreArmR[0] foreArmR_textField;
     }
     textField -e -tx $handR handR_textField;
+}
+
+// 上肢取得
+// input $waist: ルート直下の上半身に続くノード
+proc SearchUpperLegJoint(string $root, string $waist){
+    $children = `listRelatives -path -type "joint" $root`;
+    // 上半身は除く
+    $children = stringArrayRemove({ $waist }, $children );
+    // 子孫の長さをカウント
+    int $lengthList[];
+    for ($i=0; $i < size($children); $i++)
+    {
+        $lengthList[$i] = GetDecendantsCount($children[$i], 0);
+    }
+    $sorted = sort($lengthList);
+    string $upperLeg1 = "";
+    string $upperLeg2;
+    print "\nsorted:";
+    print $children;
+    print "\n";
+    // 最も子孫が長い2つを足とする
+    for ($i=0; $i < size($children); $i++)
+    {
+        if($upperLeg1 == "" && $lengthList[$i] == $sorted[size($sorted) - 1])
+            $upperLeg1 = $children[$i];
+        else if($upperLeg1 != "" &&  $lengthList[$i] == $sorted[size($sorted) - 2]) 
+        {
+            $upperLeg2 = $children[$i];
+            break;
+        }    
+    }
+    // 前から見て右にある方が左足
+    string $upperLegL, $upperLegR;
+    $pos1 = `xform -q -ws -t $upperLeg1`;
+    $pos2 = `xform -q -ws -t $upperLeg2`;
+    if($pos1[0] > $pos2[0]){
+        $upperLegL = $upperLeg1;
+        $upperLegR = $upperLeg2;
+    }else{
+        $upperLegL = $upperLeg2;
+        $upperLegR = $upperLeg1;
+    }
+    textField -e -tx $upperLegL upperLegL_textField;
+    textField -e -tx $upperLegR upperLegR_textField;
+}
+
+// 胸から下、ルートの付け根の腰を取得する
+proc string GetWaistRecursive(string $chest, string $root){
+    $parent = `listRelatives -path -p $chest`;
+    if(size($parent) == 0)
+        return "";
+    if($parent[0] == $root)
+        return $chest;
+    else
+        return GetWaistRecursive($parent[0], $root);
 }
 
 // 再帰して複数の子を持つジョイントを探す
