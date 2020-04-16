@@ -36,10 +36,12 @@ global proc createWindow() {
 
     rowLayout -nc 3 _threeColumnsRows;
     columnLayout _headerColumn;
-    text -l "";
+    text -l "" -h 15;
     text -l "前腕";
     text -l "手";
     text -l "上肢";
+    text -l "下肢（膝）";
+    text -l "足";
     setParent ..;
     
     columnLayout _leftColumn;
@@ -56,6 +58,14 @@ global proc createWindow() {
     textField upperLegL_textField;
     button -l "SET" -c "setCurrentObject(\"upperLegL_textField\")";
     setParent ..;
+    rowLayout -nc 2;
+    textField underLegL_textField;
+    button -l "SET" -c "setCurrentObject(\"underLegL_textField\")";
+    setParent ..;
+    rowLayout -nc 2;
+    textField legL_textField;
+    button -l "SET" -c "setCurrentObject(\"legL_textField\")";
+    setParent ..;
     setParent ..;
 
     columnLayout _rightColumn; 
@@ -71,6 +81,14 @@ global proc createWindow() {
     rowLayout -nc 2;
     textField upperLegR_textField;
     button -l "SET" -c "setCurrentObject(\"upperLegR_textField\")";
+    setParent ..;
+    rowLayout -nc 2;
+    textField underLegR_textField;
+    button -l "SET" -c "setCurrentObject(\"underLegR_textField\")";
+    setParent ..;
+    rowLayout -nc 2;
+    textField legR_textField;
+    button -l "SET" -c "setCurrentObject(\"legR_textField\")";
     setParent ..;
     setParent ..;
 
@@ -190,9 +208,6 @@ proc SearchUpperLegJoint(string $root, string $waist){
     $sorted = sort($lengthList);
     string $upperLeg1 = "";
     string $upperLeg2;
-    print "\nsorted:";
-    print $children;
-    print "\n";
     // 最も子孫が長い2つを足とする
     for ($i=0; $i < size($children); $i++)
     {
@@ -217,6 +232,25 @@ proc SearchUpperLegJoint(string $root, string $waist){
     }
     textField -e -tx $upperLegL upperLegL_textField;
     textField -e -tx $upperLegR upperLegR_textField;
+    GetLegJoint($upperLegL, "legL_textField", "underLegL_textField");
+    GetLegJoint($upperLegR, "legR_textField", "underLegR_textField");
+}
+
+proc GetLegJoint(string $upperLeg, string $legTextField, string $underLegTextField){
+    // 派生するものがあればそのジョイントを足とする
+    $leg = GetChestRecursive($upperLeg);
+    if($leg != ""){
+        $underLeg = `listRelatives -path -p $leg`;
+        textField -e -tx $underLeg $underLegTextField;
+    }
+    // もし派生ジョイントがない＝一直線のボーン構造なら足の根元の次を膝・その次を足としておく
+    else{
+        $decendents = `listRelatives -path -ad -type "joint" $upperLeg`;
+        $leg = $decendents[size($decendents) - 2];
+        $underLeg = $decendents[size($decendents) - 1];
+        textField -e -tx $underLeg $underLegTextField;
+    }
+    textField -e -tx $leg $legTextField;
 }
 
 // 胸から下、ルートの付け根の腰を取得する
