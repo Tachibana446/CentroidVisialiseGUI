@@ -38,13 +38,13 @@ global proc createWindow() {
 
     text -l "上腕";
     rowLayout -nc 2;
-    textField upperArmL_Textfield;
-    button -l "SET" -c "setCurrentObject(\"upperArmL_Textfield\")";
+    textField upperArmL_textfield;
+    button -l "SET" -c "setCurrentObject(\"upperArmL_textfield\")";
     setParent ..;
 
     rowLayout -nc 2;
-    textField upperArmR_Textfield;
-    button -l "SET" -c "setCurrentObject(\"upperArmR_Textfield\")";
+    textField upperArmR_textfield;
+    button -l "SET" -c "setCurrentObject(\"upperArmR_textfield\")";
     setParent ..;
 
     text -l "前腕";
@@ -100,6 +100,9 @@ global proc createWindow() {
 
     setParent ..;
     
+    separator -st "doubleDash" -hr true -w 300;
+
+    button -l "ロケータの作成" -c "tcbn_locatorSettingWindow()";
 
     showWindow $win;
 }
@@ -178,8 +181,8 @@ proc SearchUpperArms(string $chest){
         $upperArmL = $upperArm1;
         $upperArmR = $upperArm2;
     }
-    textField -e -tx $upperArmR upperArmR_Textfield;
-    textField -e -tx $upperArmL upperArmL_Textfield;
+    textField -e -tx $upperArmR upperArmR_textfield;
+    textField -e -tx $upperArmL upperArmL_textfield;
     SearchHandJoint($upperArmL, $upperArmR);
 }
 
@@ -270,6 +273,30 @@ proc string GetWaistRecursive(string $chest, string $root){
         return GetWaistRecursive($parent[0], $root);
 }
 
+// 胸から下、ルートまでをリストとして取得する
+proc string[] GetWaistDecendents(string $chest, string $root){
+    string $result[];
+    if($chest == "" || $root == "") return $result;
+    int $i = 0;
+    $now = $chest;
+    
+    while ($now != $root)
+    {
+        $result[$i] = $now;
+        $parent = `listRelatives -path -p $now`;
+        if(size($parent) == 0)
+            break;
+        $now = $parent[0];
+        $i++;
+        if($i > 100)
+            break;
+    }
+    if($now == $root)
+        $result[size($result)] = $root; // ルートも含める
+    
+    return $result;
+}
+
 // 再帰して複数の子を持つジョイントを探す
 proc string GetChestRecursive(string $joint){
     $children = `listRelatives -path -type "joint" $joint`;
@@ -300,6 +327,64 @@ proc int GetDecendantsCount(string $joint, int $count){
     }
     return $max;
 }
+
+/*******************************************************
+** ロケータを配置するウィンドウ                         **
+********************************************************/
+proc tcbn_locatorSettingWindow(){
+    print("locwin\n");
+    if((`window -ex tcbn_locatorSettingWindow`) == true) deleteUI tcbn_locatorSettingWindow;
+    string $win = `window tcbn_locatorSettingWindow`;
+
+    scrollLayout;
+    button -l "ロケータの生成";
+
+    $group = `group -em -w -n centroidLoctorsGroup`;
+
+    $root = `textField -q -tx rootJointTextField`;
+    $chest = `textField -q -tx chestJointTextField`;
+    $bodys = GetWaistDecendents($chest, $root);
+    
+    print "bodys:\n";
+    print $bodys;
+    print "\n ";
+
+    rowLayout -nc 2;
+    text -l "総体重";
+    floatField -v 100 -min 1 allWeightField;
+    setParent ..;
+
+    rowColumnLayout -nc 3 locatorsLayout;
+    $weight = `floatField -q -v allWeightField`;
+    for ($i=0; $i<(size($bodys)); $i++)
+    {
+        text -l ("胴" + $i) ("body" + $i);
+        $loc = createLocatorAtJoint(("body"+$i+"_locator#"), $bodys[$i], $group);
+        textField -tx $loc ("body" + $i + "locator_textField");
+        floatField -v ($weight / size($bodys) * 0.43) ("body" + $i + "locator_weightField");
+    
+        parentConstraint -mo $bodys[$i] $loc;
+    }
+
+    text -l "上腕左";
+    $joint = `textField -q -tx upperArmL_textfield`;
+    $loc2 = createLocatorAtJoint("upperArm_L_locator#", $joint, $group);
+    floatField -v ($weight * 0.035) upperArm_L_locator_weightField;
+    parentConstraint -mo $joint $loc2;
+
+    setParent ..;
+    
+    showWindow $win;
+}
+
+
+/// ジョイントの位置にロケータを作成し、指定グループの子にする
+proc string createLocatorAtJoint(string $name, string $joint,string $group){
+    $loc = `spaceLocator -p 0 0 0 -n $name`;
+    parent -r $loc $joint;
+    parent $loc $group;
+    return $loc[0];
+}   
 
 
 createWindow();
