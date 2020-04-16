@@ -68,7 +68,7 @@ global proc createWindow() {
     button -l "SET" -c "setCurrentObject(\"handR_textField\")";
     setParent ..;
 
-    text -l "上肢";
+    text -l "大腿";
     rowLayout -nc 2;
     textField upperLegL_textField;
     button -l "SET" -c "setCurrentObject(\"upperLegL_textField\")";
@@ -78,7 +78,7 @@ global proc createWindow() {
     button -l "SET" -c "setCurrentObject(\"upperLegR_textField\")";
     setParent ..;
 
-    text -l "下肢（膝）";
+    text -l "下腿（膝）";
     rowLayout -nc 2;
     textField underLegL_textField;
     button -l "SET" -c "setCurrentObject(\"underLegL_textField\")";
@@ -355,6 +355,12 @@ proc tcbn_locatorSettingWindow(){
     setParent ..;
 
     rowColumnLayout -nc 3 locatorsLayout;
+
+    text -l "部位";
+    text -l "ロケータ";
+    text -l "重さ";
+
+
     $weight = `floatField -q -v allWeightField`;
     for ($i=0; $i<(size($bodys)); $i++)
     {
@@ -369,9 +375,76 @@ proc tcbn_locatorSettingWindow(){
     text -l "上腕左";
     $joint = `textField -q -tx upperArmL_textfield`;
     $loc2 = createLocatorAtJoint("upperArm_L_locator#", $joint, $group);
+    textField -tx $loc2 ("upperArm_L_locaotor_textField");
     floatField -v ($weight * 0.035) upperArm_L_locator_weightField;
     parentConstraint -mo $joint $loc2;
-
+    text -l "上腕右";
+    $joint = `textField -q -tx upperArmR_textfield`;
+    $loc2 = createLocatorAtJoint("upperArm_R_locator#", $joint, $group);
+    textField -tx $loc2 ("upperArm_R_locaotor_textField");
+    floatField -v ($weight * 0.035) upperArm_R_locator_weightField;
+    parentConstraint -mo $joint $loc2;
+    text -l "左前腕";
+    $joint = `textField -q -tx foreArmL_textField`;
+    $loc2 = createLocatorAtJoint("foreArm_L_locator#", $joint, $group);
+    textField -tx $loc2 ("foreArm_L_locator_textField");
+    floatField -v ($weight * 0.023) foreArm_L_locator_weightField;
+    parentConstraint -mo $joint $loc2;
+    text -l "右前腕";
+    $joint = `textField -q -tx foreArmR_textField`;
+    $loc2 = createLocatorAtJoint("foreArm_R_locator#", $joint, $group);
+    textField -tx $loc2 ("foreArm_R_locaotor_textField");
+    floatField -v ($weight * 0.023) foreArm_R_locator_weightField;
+    parentConstraint -mo $joint $loc2;
+    text -l "左手";
+    $joint = `textField -q -tx handL_textField`;
+    $loc2 = createLocatorAtJoint("hand_L_locator#", $joint, $group);
+    textField -tx $loc2 ("hand_L_locator_textField");
+    floatField -v ($weight * 0.008) hand_L_locator_weightField;
+    parentConstraint -mo $joint $loc2;
+    text -l "右手";
+    $joint = `textField -q -tx handR_textField`;
+    $loc2 = createLocatorAtJoint("hand_R_locator#", $joint, $group);
+    textField -tx $loc2 ("hand_R_locaotor_textField");
+    floatField -v ($weight * 0.008) hand_R_locator_weightField;
+    parentConstraint -mo $joint $loc2;
+    text -l "左大腿";
+    $joint = `textField -q -tx upperLegL_textField`;
+    $loc2 = createLocatorAtJoint("upperLeg_L_locator#", $joint, $group);
+    textField -tx $loc2 ("upperLeg_L_locaotor_textField");
+    floatField -v ($weight * 0.116) upperLeg_L_locator_weightField;
+    parentConstraint -mo $joint $loc2;
+    text -l "右大腿";
+    $joint = `textField -q -tx upperLegR_textField`;
+    $loc2 = createLocatorAtJoint("upperLeg_R_locator#", $joint, $group);
+    textField -tx $loc2 ("upperLeg_R_locaotor_textField");
+    floatField -v ($weight * 0.116) upperLeg_R_locator_weightField;
+    parentConstraint -mo $joint $loc2;
+    text -l "左下腿s";
+    $joint = `textField -q -tx underLegL_textField`;
+    $loc2 = createLocatorAtJoint("underLeg_L_locator#", $joint, $group);
+    textField -tx $loc2 ("underLeg_L_locator_textField");
+    floatField -v ($weight * 0.053) underLeg_L_locator_weightField;
+    parentConstraint -mo $joint $loc2;
+    text -l "右下腿s";
+    $joint = `textField -q -tx underLegR_textField`;
+    $loc2 = createLocatorAtJoint("underLeg_R_locator#", $joint, $group);
+    textField -tx $loc2 ("underLeg_R_locaotor_textField");
+    floatField -v ($weight * 0.053) underLeg_R_locator_weightField;
+    parentConstraint -mo $joint $loc2;
+    text -l "左脚";
+    $joint = `textField -q -tx legL_textField`;
+    $loc2 = createLocatorAtJoint("leg_L_locator#", $joint, $group);
+    textField -tx $loc2 ("leg_L_locaotor_textField");
+    floatField -v ($weight * 0.018) leg_L_locator_weightField;
+    parentConstraint -mo $joint $loc2;
+    text -l "右足";
+    $joint = `textField -q -tx legR_textField`;
+    $loc2 = createLocatorAtJoint("leg_R_locator#", $joint, $group);
+    textField -tx $loc2 ("leg_R_locaotor_textField");
+    floatField -v ($weight * 0.018) leg_R_locator_weightField;
+    parentConstraint -mo $joint $loc2;
+    
     setParent ..;
     
     showWindow $win;
