@@ -31,6 +31,38 @@ global proc createWindow() {
     button -l "SET" -c "setCurrentObject(\"upperArmR_Textfield\")";
     setParent ..;
 
+    rowLayout -nc 3 _threeColumnsRows;
+    columnLayout _headerColumn;
+    text -l "";
+    text -l "前腕";
+    text -l "手";
+    setParent ..;
+    
+    columnLayout _leftColumn;
+    text -l "左";
+    rowLayout -nc 2;
+    textField foreArmL_textField;
+    button -l "SET" -c "setCurrentObject(\"foreArmL_textField\")";
+    setParent ..;
+    rowLayout -nc 2;
+    textField handL_textField;
+    button -l "SET" -c "setCurrentObject(\"handL_textField\")";
+    setParent ..;
+    setParent ..;
+
+    columnLayout _rightColumn; 
+    text -l "右";
+    rowLayout -nc 2;
+    textField foreArmR_textField;
+    button -l "SET" -c "setCurrentObject(\"foreArmR_textField\")";
+    setParent ..;
+    rowLayout -nc 2;
+    textField handR_textField;
+    button -l "SET" -c "setCurrentObject(\"handR_textField\")";
+    setParent ..;
+    setParent ..;
+
+    setParent ..;
     button -l "Do it" -c "SearchBones_ButtonClick()";
 
     showWindow $win;
@@ -99,13 +131,33 @@ proc SearchUpperArms(string $chest){
     $pos1 = `xform -q -ws -t $upperArm1`;
     $pos2 = `xform -q -ws -t $upperArm2`;
     // （前から見て）左にある方が右腕
+    string $upperArmL;
+    string $upperArmR;
     if($pos1[0] < $pos2[0]){
-        textField -e -tx $upperArm1 upperArmR_Textfield;
-        textField -e -tx $upperArm2 upperArmL_Textfield;
+        $upperArmR = $upperArm1;
+        $upperArmL = $upperArm2;
     }else{
-        textField -e -tx $upperArm2 upperArmR_Textfield;
-        textField -e -tx $upperArm1 upperArmL_Textfield;
+        $upperArmL = $upperArm1;
+        $upperArmR = $upperArm2;
     }
+    textField -e -tx $upperArmR upperArmR_Textfield;
+    textField -e -tx $upperArmL upperArmL_Textfield;
+    SearchHandJoint($upperArmL, $upperArmR);
+}
+
+proc SearchHandJoint(string $upperArmL, string $upperArmR){
+    $handL = GetChestRecursive($upperArmL);
+    if($handL != ""){
+        $foreArmL = `listRelatives -path -p $handL`;
+        textField -e -tx $foreArmL[0] foreArmL_textField;
+    }
+    textField -e -tx $handL handL_textField;
+    $handR = GetChestRecursive($upperArmR);
+    if($handR != ""){
+        $foreArmR = `listRelatives -path -p $handR`;
+        textField -e -tx $foreArmR[0] foreArmR_textField;
+    }
+    textField -e -tx $handR handR_textField;
 }
 
 // 再帰して複数の子を持つジョイントを探す
