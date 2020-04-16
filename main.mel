@@ -1,0 +1,92 @@
+// Shift JIS
+
+global proc createWindow() {
+    if((`window -ex centroidGuiWindow`) == true) deleteUI centroidGuiWindow;
+    string $win = `window centroidGuiWindow`;
+
+    scrollLayout;
+    button -l "hoge";
+    
+    rowLayout -nc 3;
+    text -l "ルートジョイント";
+    textField rootJointTextField;
+    button -l "SET" -c "setCurrentObject(\"rootJointTextField\")";
+    setParent ..;
+
+    rowLayout -nc 4;
+    text -l "胴";
+    textField chestJointTextField;
+    button -l "SET" -c "setCurrentObject(\"chestJointTextField\")";
+    setParent ..;
+
+    rowLayout -nc 4;
+    text -l "左上腕";
+    textField upperArmL_Textfield;
+    button -l "SET" -c "setCurrentObject(\"upperArmL_Textfield\")";
+    setParent ..;
+
+    rowLayout -nc 4;
+    text -l "右上腕";
+    textField upperArmR_Textfield;
+    button -l "SET" -c "setCurrentObject(\"upperArmR_Textfield\")";
+    setParent ..;
+
+    button -l "Do it" -c "SearchBones_ButtonClick()";
+
+    showWindow $win;
+}
+
+proc setCurrentObject(string $fieldName){
+    $current = `ls -sl -head 1`;
+    textField -e -tx $current $fieldName;
+}
+
+proc SearchBones_ButtonClick(){
+    $root = `textField -q -tx rootJointTextField`;
+    SearchBones($root);
+}
+
+proc SearchBones(string $root){
+    $children = `listRelatives -path -type "joint" $root`;
+   
+    $chest = "";
+    $chestY = -9999;
+    for ($child in $children)
+    {
+        string $_chest = GetChestRecursive($child);
+        if($_chest == "")
+            continue;
+        $_pos = `xform -q -ws -t $_chest`;
+        if($chestY == -9999 || $_pos[1] > $chestY){
+            $chest = $_chest;
+            $chestY = $_pos[1];
+        }
+    }
+    if($chest != "")
+    {
+        textField -e -tx $chest chestJointTextField;
+        // 上腕の取得
+
+    }
+}
+
+// 再帰して複数の子を持つジョイントを探す
+proc string GetChestRecursive(string $joint){
+    $children = `listRelatives -path -type "joint" $joint`;
+    $count = `size $children`;
+    if($count == 0 )
+        return "";
+    else if($count >= 2)
+        return $joint;
+    else
+    {
+        return GetChestRecursive($children[0]);
+    }
+}
+
+// 再帰して子孫の長さ(何代まで続いたか)を取得
+proc int GetDecendantsCount(string $joint){
+    
+}
+
+createWindow();
