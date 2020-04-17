@@ -8,17 +8,19 @@ global proc createWindow() {
     string $win = `window centroidGuiWindow`;
 
     scrollLayout;
-    button -l "hoge";
     
+    text -l "① ルート（腰）のジョイントを指定してください。";
+
     rowLayout -nc 3;
     text -l "ルートジョイント";
     textField rootJointTextField;
     button -l "SET" -c "setCurrentObject(\"rootJointTextField\")";
     setParent ..;
 
-    button -l "Do it" -c "SearchBones_ButtonClick()";
+    text -l "② 各ジョイントを推定します。";
+    button -l "ジョイント構造の推定" -c "SearchBones_ButtonClick()";
     
-    separator -st "doubleDash" -hr true -w 150;
+    separator -st "doubleDash" -hr true -w 300 -h 15;
     
 
 
@@ -101,8 +103,15 @@ global proc createWindow() {
     setParent ..;
     
     separator -st "doubleDash" -hr true -w 300;
+    
+    text -l "③ 人間の体重を入力";
+    rowLayout -nc 2;
+    text -l "総体重";
+    floatField -v 100 -min 1 allWeightField;
+    setParent ..;
 
-    button -l "ロケータの作成" -c "tcbn_locatorSettingWindow()";
+    text -l "④ 推定したジョイントが正しければ実行してください";
+    button -l "重心の作成" -c "tcbn_locatorSettingWindow()";
 
     showWindow $win;
 }
@@ -349,10 +358,6 @@ proc tcbn_locatorSettingWindow(){
     print $bodys;
     print "\n ";
 
-    rowLayout -nc 2;
-    text -l "総体重";
-    floatField -v 100 -min 1 allWeightField;
-    setParent ..;
 
     rowColumnLayout -nc 3 locatorsLayout;
 
@@ -454,7 +459,7 @@ proc tcbn_locatorSettingWindow(){
     connectAttr -f  ($loc2 + "Shape.worldPosition[0]") ($lowerCentroids +".inputArray[" + $j + "].position");
     setAttr ($lowerCentroids +".inputArray[" + $j + "].weight") ($weight * 0.116);
     $j++;
-    text -l "左下腿s";
+    text -l "左下腿";
     $joint = `textField -q -tx underLegL_textField`;
     $loc2 = createLocatorAtJoint("underLeg_L_locator#", $joint, $group);
     textField -tx $loc2 ("underLeg_L_locator_textField");
@@ -463,7 +468,7 @@ proc tcbn_locatorSettingWindow(){
     connectAttr -f  ($loc2 + "Shape.worldPosition[0]") ($lowerCentroids +".inputArray[" + $j + "].position");
     setAttr ($lowerCentroids +".inputArray[" + $j + "].weight") ($weight * 0.053);
     $j++;
-    text -l "右下腿s";
+    text -l "右下腿";
     $joint = `textField -q -tx underLegR_textField`;
     $loc2 = createLocatorAtJoint("underLeg_R_locator#", $joint, $group);
     textField -tx $loc2 ("underLeg_R_locaotor_textField");
