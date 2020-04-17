@@ -512,6 +512,11 @@ proc tcbn_locatorSettingWindow(){
     connectAttr -f ($allCentroid + ".outputPosition0") ($l2[0] + ".tx");
     connectAttr -f ($allCentroid + ".outputPosition2") ($l2[0] + ".tz");
     $line = `rename $line "centroidVisualizedCurve#"`;
+    $circle = `circle -c 0 0 0 -normal 0 1 0`;
+    $circle2 = `rename $circle[0] "centroidVisualizedCurve#"`;
+    connectAttr -f ($allCentroid + ".outputPosition0") ($circle2 + ".tx");
+    connectAttr -f ($allCentroid + ".outputPosition2") ($circle2 + ".tz");
+    parent $circle2 $group;
 
     setParent ..;
     
