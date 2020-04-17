@@ -360,6 +360,8 @@ proc tcbn_locatorSettingWindow(){
     text -l "ロケータ";
     text -l "重さ";
 
+    $upperCentroids = `createNode compositeCentroidNode -n "upperCentroidsNode#"`;
+    $j = 0;
 
     $weight = `floatField -q -v allWeightField`;
     for ($i=0; $i<(size($bodys)); $i++)
@@ -370,7 +372,12 @@ proc tcbn_locatorSettingWindow(){
         floatField -v ($weight / size($bodys) * 0.43) ("body" + $i + "locator_weightField");
     
         parentConstraint -mo $bodys[$i] $loc;
+        connectAttr -f  ($loc + "Shape.worldPosition[0]") ($upperCentroids + ".inputArray[" + $j + "].position");
+        setAttr  ($upperCentroids + ".inputArray[" + $j + "].weight") ($weight / size($bodys) * 0.43) ;
+        $j++;
     }
+
+    
 
     text -l "上腕左";
     $joint = `textField -q -tx upperArmL_textfield`;
@@ -378,73 +385,129 @@ proc tcbn_locatorSettingWindow(){
     textField -tx $loc2 ("upperArm_L_locaotor_textField");
     floatField -v ($weight * 0.035) upperArm_L_locator_weightField;
     parentConstraint -mo $joint $loc2;
+    connectAttr -f  ($loc2 + "Shape.worldPosition[0]") ($upperCentroids +".inputArray[" + $j + "].position");
+    setAttr ($upperCentroids +".inputArray[" + $j + "].weight") ($weight * 0.035);
+    $j++;
     text -l "上腕右";
     $joint = `textField -q -tx upperArmR_textfield`;
     $loc2 = createLocatorAtJoint("upperArm_R_locator#", $joint, $group);
     textField -tx $loc2 ("upperArm_R_locaotor_textField");
     floatField -v ($weight * 0.035) upperArm_R_locator_weightField;
     parentConstraint -mo $joint $loc2;
+    connectAttr -f  ($loc2 + "Shape.worldPosition[0]") ($upperCentroids +".inputArray[" + $j + "].position");
+    setAttr ($upperCentroids +".inputArray[" + $j + "].weight") ($weight * 0.035);
+    $j++;
     text -l "左前腕";
     $joint = `textField -q -tx foreArmL_textField`;
     $loc2 = createLocatorAtJoint("foreArm_L_locator#", $joint, $group);
     textField -tx $loc2 ("foreArm_L_locator_textField");
     floatField -v ($weight * 0.023) foreArm_L_locator_weightField;
     parentConstraint -mo $joint $loc2;
+    connectAttr -f  ($loc2 + "Shape.worldPosition[0]") ($upperCentroids +".inputArray[" + $j + "].position");
+    setAttr ($upperCentroids +".inputArray[" + $j + "].weight") ($weight * 0.023);
+    $j++;
     text -l "右前腕";
     $joint = `textField -q -tx foreArmR_textField`;
     $loc2 = createLocatorAtJoint("foreArm_R_locator#", $joint, $group);
     textField -tx $loc2 ("foreArm_R_locaotor_textField");
     floatField -v ($weight * 0.023) foreArm_R_locator_weightField;
     parentConstraint -mo $joint $loc2;
+    connectAttr -f  ($loc2 + "Shape.worldPosition[0]") ($upperCentroids +".inputArray[" + $j + "].position");
+    setAttr ($upperCentroids +".inputArray[" + $j + "].weight") ($weight * 0.023);
+    $j++;
     text -l "左手";
     $joint = `textField -q -tx handL_textField`;
     $loc2 = createLocatorAtJoint("hand_L_locator#", $joint, $group);
     textField -tx $loc2 ("hand_L_locator_textField");
     floatField -v ($weight * 0.008) hand_L_locator_weightField;
     parentConstraint -mo $joint $loc2;
+    connectAttr -f  ($loc2 + "Shape.worldPosition[0]") ($upperCentroids +".inputArray[" + $j + "].position");
+    setAttr ($upperCentroids +".inputArray[" + $j + "].weight") ($weight * 0.008);
+    $j++;
     text -l "右手";
     $joint = `textField -q -tx handR_textField`;
     $loc2 = createLocatorAtJoint("hand_R_locator#", $joint, $group);
     textField -tx $loc2 ("hand_R_locaotor_textField");
     floatField -v ($weight * 0.008) hand_R_locator_weightField;
     parentConstraint -mo $joint $loc2;
+    connectAttr -f  ($loc2 + "Shape.worldPosition[0]") ($upperCentroids +".inputArray[" + $j + "].position");
+    setAttr ($upperCentroids +".inputArray[" + $j + "].weight") ($weight * 0.008);
+    $j++;
+
+    $lowerCentroids = `createNode compositeCentroidNode -n "lowerCentroidNode#"`;
+    $j = 0;
     text -l "左大腿";
     $joint = `textField -q -tx upperLegL_textField`;
     $loc2 = createLocatorAtJoint("upperLeg_L_locator#", $joint, $group);
     textField -tx $loc2 ("upperLeg_L_locaotor_textField");
     floatField -v ($weight * 0.116) upperLeg_L_locator_weightField;
     parentConstraint -mo $joint $loc2;
+    connectAttr -f  ($loc2 + "Shape.worldPosition[0]") ($lowerCentroids +".inputArray[" + $j + "].position");
+    setAttr ($lowerCentroids +".inputArray[" + $j + "].weight") ($weight * 0.116);
+    $j++;
     text -l "右大腿";
     $joint = `textField -q -tx upperLegR_textField`;
     $loc2 = createLocatorAtJoint("upperLeg_R_locator#", $joint, $group);
     textField -tx $loc2 ("upperLeg_R_locaotor_textField");
     floatField -v ($weight * 0.116) upperLeg_R_locator_weightField;
     parentConstraint -mo $joint $loc2;
+    connectAttr -f  ($loc2 + "Shape.worldPosition[0]") ($lowerCentroids +".inputArray[" + $j + "].position");
+    setAttr ($lowerCentroids +".inputArray[" + $j + "].weight") ($weight * 0.116);
+    $j++;
     text -l "左下腿s";
     $joint = `textField -q -tx underLegL_textField`;
     $loc2 = createLocatorAtJoint("underLeg_L_locator#", $joint, $group);
     textField -tx $loc2 ("underLeg_L_locator_textField");
     floatField -v ($weight * 0.053) underLeg_L_locator_weightField;
     parentConstraint -mo $joint $loc2;
+    connectAttr -f  ($loc2 + "Shape.worldPosition[0]") ($lowerCentroids +".inputArray[" + $j + "].position");
+    setAttr ($lowerCentroids +".inputArray[" + $j + "].weight") ($weight * 0.053);
+    $j++;
     text -l "右下腿s";
     $joint = `textField -q -tx underLegR_textField`;
     $loc2 = createLocatorAtJoint("underLeg_R_locator#", $joint, $group);
     textField -tx $loc2 ("underLeg_R_locaotor_textField");
     floatField -v ($weight * 0.053) underLeg_R_locator_weightField;
     parentConstraint -mo $joint $loc2;
+    connectAttr -f  ($loc2 + "Shape.worldPosition[0]") ($lowerCentroids +".inputArray[" + $j + "].position");
+    setAttr ($lowerCentroids +".inputArray[" + $j + "].weight") ($weight * 0.053);
+    $j++;
     text -l "左脚";
     $joint = `textField -q -tx legL_textField`;
     $loc2 = createLocatorAtJoint("leg_L_locator#", $joint, $group);
     textField -tx $loc2 ("leg_L_locaotor_textField");
     floatField -v ($weight * 0.018) leg_L_locator_weightField;
     parentConstraint -mo $joint $loc2;
+    connectAttr -f  ($loc2 + "Shape.worldPosition[0]") ($lowerCentroids +".inputArray[" + $j + "].position");
+    setAttr ($lowerCentroids +".inputArray[" + $j + "].weight") ($weight * 0.018);
+    $j++;
     text -l "右足";
     $joint = `textField -q -tx legR_textField`;
     $loc2 = createLocatorAtJoint("leg_R_locator#", $joint, $group);
     textField -tx $loc2 ("leg_R_locaotor_textField");
     floatField -v ($weight * 0.018) leg_R_locator_weightField;
     parentConstraint -mo $joint $loc2;
+    connectAttr -f  ($loc2 + "Shape.worldPosition[0]") ($lowerCentroids +".inputArray[" + $j + "].position");
+    setAttr ($lowerCentroids +".inputArray[" + $j + "].weight") ($weight * 0.018);
     
+    $allCentroid = `createNode compositeCentroidNode -n "fullBodyCentroidNode#"`;
+    connectAttr -f ($upperCentroids + ".outputPosition") ($allCentroid  + ".inputArray[0].position");
+    connectAttr -f ($upperCentroids + ".outputWeight") ($allCentroid  + ".inputArray[0].weight");
+    connectAttr -f ($lowerCentroids + ".outputPosition") ($allCentroid  + ".inputArray[1].position");
+    connectAttr -f ($lowerCentroids + ".outputWeight") ($allCentroid  + ".inputArray[1].weight");
+
+    
+    $line = `curve -d 1 -p 0 0 0 -p 0 0 0 -k 0 -k 1 `;
+    parent $line $group;
+    $l1 = `pointCurveConstraint -ch true -rpo true -w 1 ($line + ".u[0]") `;
+    $l2 = `pointCurveConstraint -ch true -rpo true -w 1 ($line + ".u[1]") `;
+    parent $l1[0] $group;
+    parent $l2[0] $group;
+    connectAttr -f ($allCentroid + ".outputPosition") ($l1[0] + ".translate");
+    connectAttr -f ($allCentroid + ".outputPosition0") ($l2[0] + ".tx");
+    connectAttr -f ($allCentroid + ".outputPosition2") ($l2[0] + ".tz");
+    $line = `rename $line "centroidVisualizedCurve#"`;
+
     setParent ..;
     
     showWindow $win;
